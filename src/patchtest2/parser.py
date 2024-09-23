@@ -1,17 +1,12 @@
 # ex:ts=4:sw=4:sts=4:et
 # -*- tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 #
-# patchtestdata: module used to share command line arguments between
-#                patchtest & test suite and a data store between test cases
+# parser: implementation of a patchtest-specific parser
 #
-# Copyright (C) 2016 Intel Corporation
+# Copyright (C) 2024 Trevor Gamblin <tgamblin@baylibre.com>
 #
 # SPDX-License-Identifier: GPL-2.0-only
 #
-# NOTE: Strictly speaking, unit test should be isolated from outside,
-#       but patchtest test suites uses command line input data and
-#       pretest and test test cases may use the datastore defined
-#       on this module
 
 import os
 import argparse
@@ -22,11 +17,6 @@ default_repodir = os.path.abspath(os.path.dirname(__file__) + "/../../..")
 
 class PatchtestParser(object):
     """Abstract the patchtest argument parser"""
-
-    @classmethod
-    def set_namespace(cls):
-        parser = cls.get_parser()
-        parser.parse_args(namespace=cls)
 
     @classmethod
     def get_parser(cls):
@@ -60,33 +50,10 @@ class PatchtestParser(object):
         )
 
         parser.add_argument(
-            "--top-level-directory",
-            "-t",
-            dest="topdir",
-            default=None,
-            help="Top level directory of project (defaults to start directory)",
-        )
-
-        parser.add_argument(
-            "--pattern",
-            "-p",
-            dest="pattern",
-            default="test*.py",
-            help="Pattern to match test files",
-        )
-
-        parser.add_argument(
             "--target-branch",
             "-b",
             dest="target_branch",
             help="Branch name used by patchtest to branch from. If not provided, it uses the current one.",
-        )
-
-        parser.add_argument(
-            "--base-commit",
-            "-c",
-            dest="basecommit",
-            help="Commit ID used by patchtest to branch from. By default, it uses HEAD.",
         )
 
         parser.add_argument(
