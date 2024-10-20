@@ -53,7 +53,10 @@ class Patch:
         self.split_body = re.split("---", data.get_payload(), maxsplit=1)
         self.commit_message = self.split_body[0]
         self.diff = self.split_body[1]
-
+        # get the shortlog, but make sure to exclude bracketed prefixes
+        # before the colon, and remove extra whitespace/newlines
+        self.shortlog = self.subject[self.subject.find(']', 0,
+            self.subject.find(':')) + 1:].replace('\n', '').strip()
 
 class PatchSeries:
     def __init__(self, filepath):
