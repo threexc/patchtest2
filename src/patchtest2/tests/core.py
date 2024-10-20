@@ -34,35 +34,34 @@ def test_for_pattern(pattern, string):
         return "FAIL"
 
 def test_mbox_signed_off_by_presence(target):
+    test_name = "mbox_signed_off_by_presence"
     result = test_for_pattern(patterns.signed_off_by,
                               target.commit_message)
+    reason = "mbox was missing a signed-off-by tag"
     return PatchtestResult(target.subject,
-                           "mbox_signed_off_by_presence",
+                           test_name,
                            result,
-                           "mbox was missing a signed-off-by tag")
+                           reason)
 
 def test_mbox_shortlog_format(target):
+    test_name = "test_mbox_shortlog_format"
+    result = "PASS"
+    reason = None
     if not target.shortlog.strip():
-        return PatchtestResult(target.subject,
-                               "mbox_shortlog_format",
-                               "SKIP",
-                               "mbox shortlog was empty, no test needed")
+        result = "SKIP"
+        reason = "mbox shortlog was empty, no test needed"
 
     if target.shortlog.startswith('Revert "'):
-        return PatchtestResult(target.subject,
-                               "mbox_shortlog_format",
-                               "SKIP",
-                               "No need to test a revert patch")
+        result = "SKIP"
+        reason = "No need to test a revert patch"
 
     try:
         patterns.shortlog.parse_string(target.shortlog, parse_all=True)
     except pyparsing.ParseException as pe:
-        return PatchtestResult(target.subject,
-                               "mbox_shortlog_format",
-                               "FAIL",
-                               'Commit shortlog (first line of commit message) should follow the format "<target>: <summary>"')
+        result = "FAIL"
+        reason = 'Commit shortlog (first line of commit message) should follow the format "<target>: <summary>"'
 
     return PatchtestResult(target.subject,
-                           "mbox_shortlog_format",
-                           "PASS",
-                           None)
+                           test_name,
+                           result,
+                           reason)
