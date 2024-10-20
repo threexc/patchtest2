@@ -1,4 +1,5 @@
 import patchtest2.patterns as patterns
+import pyparsing
 
 class PatchtestResult:
     def __init__(self, patch, testname, result, reason):
@@ -20,6 +21,7 @@ class PatchtestResults:
         self.target_repo = target_repo
         self.series = series
         self.mbox_signed_off_by_results = [test_mbox_signed_off_by_presence(patch) for patch in self.series.patchdata]
+        self.mbox_shortlog_format_results = [test_mbox_shortlog_format(patch) for patch in self.series.patchdata]
 
 # test_for_pattern()
 # @pattern: a pyparsing regex object
@@ -38,3 +40,29 @@ def test_mbox_signed_off_by_presence(target):
                            "mbox_signed_off_by_presence",
                            result,
                            "mbox was missing a signed-off-by tag")
+
+def test_mbox_shortlog_format(target):
+    if not target.shortlog.strip():
+        return PatchtestResult(target.subject,
+                               "mbox_shortlog_format",
+                               "SKIP",
+                               "mbox shortlog was empty, no test needed")
+
+    if target.shortlog.startswith('Revert "'):
+        return PatchtestResult(target.subject,
+                               "mbox_shortlog_format",
+                               "SKIP",
+                               "No need to test a revert patch")
+
+    try:
+        patterns.shortlog.parse_string(target.shortlog, parse_all=True)
+    except pyparsing.ParseException as pe:
+        return PatchtestResult(target.subject,
+                               "mbox_shortlog_format",
+                               "FAIL",
+                               'Commit shortlog (first line of commit message) should follow the format "<target>: <summary>"')
+
+    return PatchtestResult(target.subject,
+                           "mbox_shortlog_format",
+                           "PASS",
+                           None)

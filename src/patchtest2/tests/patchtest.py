@@ -10,3 +10,5 @@ def run():
     results = PatchtestResults(target_repo, series)
     for testresult in results.mbox_signed_off_by_results:
         print(testresult)
+    for testresult in results.mbox_shortlog_format_results:
+        print(testresult)
