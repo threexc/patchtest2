@@ -1,21 +1,19 @@
 import patchtest2.patterns as patterns
 
 class PatchtestResult:
-    def __init__(self, patch, testname, result):
+    def __init__(self, patch, testname, result, reason):
         self.patch = patch
         self.testname = testname
         self.result = result
-
-    def __str__(self):
-        return f"{self.result}: {self.testname} on {self.patch}"
-
-class PatchtestFail(PatchtestResult):
-    def __init__(self, patch, testname, result, reason):
-        super().__init__(patch, testname, result)
         self.reason = reason
+        self.pass_string = f"{self.result}: {self.testname} on {self.patch}"
+        self.skip_or_fail_string = f"{self.result}: {self.testname} on {self.patch} ({self.reason})"
 
     def __str__(self):
-        return f"{self.result}: {self.testname} on {self.patch} ({self.reason})"
+        if self.result == "PASS":
+            return self.pass_string
+        else:
+            return self.skip_or_fail_string
 
 class PatchtestResults:
     def __init__(self, target_repo, series):
@@ -36,7 +34,7 @@ def test_for_pattern(pattern, string):
 def test_mbox_signed_off_by_presence(target):
     result = test_for_pattern(patterns.signed_off_by,
                               target.commit_message)
-    if result == "PASS":
-        return PatchtestResult(target.subject, "mbox_signed_off_by_presence", result)
-    elif result == "FAIL":
-        return PatchtestFail(target.subject, "mbox_signed_off_by_presence", result, "mbox was missing a signed-off-by tag")
+    return PatchtestResult(target.subject,
+                           "mbox_signed_off_by_presence",
+                           result,
+                           "mbox was missing a signed-off-by tag")
