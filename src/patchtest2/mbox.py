@@ -1,10 +1,11 @@
 #! /usr/bin/env python3
 
-# patchtest.py
+# mbox.py
 #
-# Classes and helpers for testing patches
+# Classes for representing mboxes, parsed patches and patch series, and
+# the repositories they target
 #
-# Copyright (C) 2024 BayLibre SAS
+# Copyright (C) Trevor Gamblin <tgamblin@baylibre.com>
 #
 # SPDX-License-Identifier: GPL-2.0-only
 #

@@ -1,6 +1,6 @@
 # common pyparsing variables
 #
-# Copyright (C) 2016 Intel Corporation
+# Copyright (C) 2024 Trevor Gamblin <tgamblin@baylibre.com>
 #
 # SPDX-License-Identifier: GPL-2.0-only
 
