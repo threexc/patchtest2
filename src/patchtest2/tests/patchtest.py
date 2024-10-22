@@ -12,3 +12,5 @@ def run():
         print(testresult)
     for testresult in results.mbox_shortlog_format_results:
         print(testresult)
+    for testresult in results.mbox_commit_message_presence_results:
+        print(testresult)

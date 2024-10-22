@@ -22,6 +22,7 @@ class PatchtestResults:
         self.series = series
         self.mbox_signed_off_by_results = [test_mbox_signed_off_by_presence(patch) for patch in self.series.patchdata]
         self.mbox_shortlog_format_results = [test_mbox_shortlog_format(patch) for patch in self.series.patchdata]
+        self.mbox_commit_message_presence_results = [test_mbox_commit_message_presence(patch) for patch in self.series.patchdata]
 
 # test_for_pattern()
 # @pattern: a pyparsing regex object
@@ -60,6 +61,21 @@ def test_mbox_shortlog_format(target):
     except pyparsing.ParseException as pe:
         result = "FAIL"
         reason = 'Commit shortlog (first line of commit message) should follow the format "<target>: <summary>"'
+
+    return PatchtestResult(target.subject,
+                           test_name,
+                           result,
+                           reason)
+
+def test_mbox_commit_message_presence(target):
+    test_name = "test_mbox_commit_message_presence"
+    result = "PASS"
+    reason = "Please include a commit message on your patch explaining the change"
+
+    # Check to see if there is content before the signoff
+    match = patterns.endcommit_messages_regex.search(target.commit_message)
+    if not target.commit_message[:match.start()]:
+        result = "FAIL"
 
     return PatchtestResult(target.subject,
                            test_name,
