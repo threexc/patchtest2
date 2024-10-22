@@ -34,7 +34,7 @@ def test_for_pattern(pattern, string):
         return "FAIL"
 
 def test_mbox_signed_off_by_presence(target):
-    test_name = "mbox_signed_off_by_presence"
+    test_name = "test_mbox_signed_off_by_presence"
     result = test_for_pattern(patterns.signed_off_by,
                               target.commit_message)
     reason = "mbox was missing a signed-off-by tag"
