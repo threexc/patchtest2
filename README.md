@@ -18,8 +18,23 @@ You can find out more about the tool here:
 
 ## Installation
 
+Right now, the tool is only installable manually. First, setup a
+virtualenv:
+
 ```console
-pip install patchtest2
+python3 -m venv venv
+```
+
+Start it:
+
+```console
+source venv/bin/activate
+```
+
+Then install with pip:
+
+```console
+pip install .
 ```
 
 ## License
