@@ -50,10 +50,26 @@ class PatchtestResults:
             ]
         )
 
-    def print_mbox_results(self, tag):
-        for testresult in self.mbox_results[tag]:
-            print(testresult)
+        self.results = dict(
+            [
+                (
+                    'mbox',
+                    self.mbox_results,
+                ),
+            ]
+        )
 
+    def _print_result(self, category, tag):
+        for value in self.results[category][tag]:
+            print(value)
+
+    def _print_results(self, category):
+        for tag in self.results[category].keys():
+            self._print_result(category, tag)
+
+    def print_results(self):
+        for category in self.results.keys():
+            self._print_results(category)
 
 # test_for_pattern()
 # @pattern: a pyparsing regex object

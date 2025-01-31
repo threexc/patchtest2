@@ -10,6 +10,4 @@ def run():
     series = PatchSeries(args.patch_path)
     results = PatchtestResults(target_repo, series)
 
-    results.print_mbox_results("signed_off_by")
-    results.print_mbox_results("shortlog_format")
-    results.print_mbox_results("commit_message_presence")
+    results.print_results()
