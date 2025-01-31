@@ -28,24 +28,15 @@ class PatchtestResults:
             [
                 (
                     "signed_off_by",
-                    [
-                        test_mbox_signed_off_by_presence(patch)
-                        for patch in self.series.patchdata
-                    ],
+                    self._results(test_mbox_signed_off_by_presence),
                 ),
                 (
                     "shortlog_format",
-                    [
-                        test_mbox_shortlog_format(patch)
-                        for patch in self.series.patchdata
-                    ],
+                    self._results(test_mbox_shortlog_format),
                 ),
                 (
                     "commit_message_presence",
-                    [
-                        test_mbox_commit_message_presence(patch)
-                        for patch in self.series.patchdata
-                    ],
+                    self._results(test_mbox_commit_message_presence),
                 ),
             ]
         )
@@ -58,6 +49,9 @@ class PatchtestResults:
                 ),
             ]
         )
+
+    def _results(self, testname):
+        return [testname(patch) for patch in self.series.patchdata]
 
     def _print_result(self, category, tag):
         for value in self.results[category][tag]:
