@@ -45,7 +45,7 @@ class PatchtestResults:
         self.results = dict(
             [
                 (
-                    'mbox',
+                    "mbox",
                     self.mbox_results,
                 ),
             ]
@@ -65,6 +65,7 @@ class PatchtestResults:
     def print_results(self):
         for category in self.results.keys():
             self._print_results(category)
+
 
 # test_for_pattern()
 # @pattern: a pyparsing regex object
