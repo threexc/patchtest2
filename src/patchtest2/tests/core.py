@@ -1,5 +1,6 @@
 import patchtest2.patterns as patterns
 import pyparsing
+import re
 
 
 class PatchtestResult:
@@ -28,15 +29,15 @@ class PatchtestResults:
             [
                 (
                     "signed_off_by",
-                    self._results(test_mbox_signed_off_by_presence),
+                    self._results(test_mbox_has_signed_off_by),
                 ),
                 (
                     "shortlog_format",
                     self._results(test_mbox_shortlog_format),
                 ),
                 (
-                    "commit_message_presence",
-                    self._results(test_mbox_commit_message_presence),
+                    "has_commit_message",
+                    self._results(test_mbox_has_commit_message),
                 ),
             ]
         )
@@ -76,8 +77,8 @@ def test_for_pattern(pattern, string):
         return "FAIL"
 
 
-def test_mbox_signed_off_by_presence(target):
-    test_name = "test_mbox_signed_off_by_presence"
+def test_mbox_has_signed_off_by(target):
+    test_name = "test_mbox_has_signed_off_by"
     result = test_for_pattern(patterns.signed_off_by, target.commit_message)
     reason = "mbox was missing a signed-off-by tag"
     return PatchtestResult(target.subject, test_name, result, reason)
@@ -104,15 +105,20 @@ def test_mbox_shortlog_format(target):
     return PatchtestResult(target.subject, test_name, result, reason)
 
 
-def test_mbox_commit_message_presence(target):
-    test_name = "test_mbox_commit_message_presence"
+def test_mbox_has_commit_message(target):
+    test_name = "test_mbox_has_commit_message"
     result = "PASS"
     reason = "Please include a commit message on your patch explaining the change"
 
-    # Check to see if there is content before the signoff
-    match = patterns.endcommit_messages_regex.search(target.commit_message)
-    if match is not None:
-        if not target.commit_message[:match.start()]:
-            result = "FAIL"
+    # Get all lines that aren't Signed-off-by
+    commit_lines = [
+        line.strip()
+        for line in target.commit_message.splitlines()
+        if line.strip() and not line.strip().startswith("Signed-off-by:")
+    ]
+
+    # If we have any remaining lines, there's a commit message
+    if not commit_lines:
+        result = "FAIL"
 
     return PatchtestResult(target.subject, test_name, result, reason)

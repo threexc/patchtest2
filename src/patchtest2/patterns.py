@@ -40,7 +40,7 @@ metadata_summary = "SUMMARY"
 cve_check_ignore_var = "CVE_CHECK_IGNORE"
 cve_status_var = "CVE_STATUS"
 endcommit_messages_regex = re.compile(
-    r"\(From \w+-\w+ rev:|(?<!\S)Signed-off-by|(?<!\S)---\n"
+    r"\(From \w+-\w+ rev:|^---$"
 )
 patchmetadata_regex = re.compile(r"-{3} \S+|\+{3} \S+|@{2} -\d+,\d+ \+\d+,\d+ @{2} \S+")
 
