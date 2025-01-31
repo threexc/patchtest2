@@ -1,6 +1,7 @@
 import patchtest2.patterns as patterns
 import pyparsing
 
+
 class PatchtestResult:
     def __init__(self, patch, testname, result, reason):
         self.patch = patch
@@ -8,7 +9,9 @@ class PatchtestResult:
         self.result = result
         self.reason = reason
         self.pass_string = f"{self.result}: {self.testname} on {self.patch}"
-        self.skip_or_fail_string = f"{self.result}: {self.testname} on {self.patch} ({self.reason})"
+        self.skip_or_fail_string = (
+            f"{self.result}: {self.testname} on {self.patch} ({self.reason})"
+        )
 
     def __str__(self):
         if self.result == "PASS":
@@ -16,25 +19,41 @@ class PatchtestResult:
         else:
             return self.skip_or_fail_string
 
+
 class PatchtestResults:
     def __init__(self, target_repo, series):
         self.target_repo = target_repo
         self.series = series
         self.mbox_results = dict(
-                [
-                ('signed_off_by', [test_mbox_signed_off_by_presence(patch) for
-                                    patch in self.series.patchdata]),
-                ('shortlog_format', [test_mbox_shortlog_format(patch) for patch
-                                      in self.series.patchdata]),
-                ('commit_message_presence',
-                  [test_mbox_commit_message_presence(patch) for patch in
-                   self.series.patchdata]),
-                ]
-                )
+            [
+                (
+                    "signed_off_by",
+                    [
+                        test_mbox_signed_off_by_presence(patch)
+                        for patch in self.series.patchdata
+                    ],
+                ),
+                (
+                    "shortlog_format",
+                    [
+                        test_mbox_shortlog_format(patch)
+                        for patch in self.series.patchdata
+                    ],
+                ),
+                (
+                    "commit_message_presence",
+                    [
+                        test_mbox_commit_message_presence(patch)
+                        for patch in self.series.patchdata
+                    ],
+                ),
+            ]
+        )
 
     def print_mbox_results(self, tag):
         for testresult in self.mbox_results[tag]:
             print(testresult)
+
 
 # test_for_pattern()
 # @pattern: a pyparsing regex object
@@ -46,15 +65,13 @@ def test_for_pattern(pattern, string):
     else:
         return "FAIL"
 
+
 def test_mbox_signed_off_by_presence(target):
     test_name = "test_mbox_signed_off_by_presence"
-    result = test_for_pattern(patterns.signed_off_by,
-                              target.commit_message)
+    result = test_for_pattern(patterns.signed_off_by, target.commit_message)
     reason = "mbox was missing a signed-off-by tag"
-    return PatchtestResult(target.subject,
-                           test_name,
-                           result,
-                           reason)
+    return PatchtestResult(target.subject, test_name, result, reason)
+
 
 def test_mbox_shortlog_format(target):
     test_name = "test_mbox_shortlog_format"
@@ -74,10 +91,8 @@ def test_mbox_shortlog_format(target):
         result = "FAIL"
         reason = 'Commit shortlog (first line of commit message) should follow the format "<target>: <summary>"'
 
-    return PatchtestResult(target.subject,
-                           test_name,
-                           result,
-                           reason)
+    return PatchtestResult(target.subject, test_name, result, reason)
+
 
 def test_mbox_commit_message_presence(target):
     test_name = "test_mbox_commit_message_presence"
@@ -86,10 +101,7 @@ def test_mbox_commit_message_presence(target):
 
     # Check to see if there is content before the signoff
     match = patterns.endcommit_messages_regex.search(target.commit_message)
-    if not target.commit_message[:match.start()]:
+    if not target.commit_message[: match.start()]:
         result = "FAIL"
 
-    return PatchtestResult(target.subject,
-                           test_name,
-                           result,
-                           reason)
+    return PatchtestResult(target.subject, test_name, result, reason)

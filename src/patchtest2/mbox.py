@@ -17,6 +17,7 @@ import re
 
 from dataclasses import dataclass
 
+
 # From: https://stackoverflow.com/questions/59681461/read-a-big-mbox-file-with-python
 class MboxReader:
     def __init__(self, filepath):
@@ -56,8 +57,12 @@ class Patch:
         self.diff = self.split_body[1]
         # get the shortlog, but make sure to exclude bracketed prefixes
         # before the colon, and remove extra whitespace/newlines
-        self.shortlog = self.subject[self.subject.find(']', 0,
-            self.subject.find(':')) + 1:].replace('\n', '').strip()
+        self.shortlog = (
+            self.subject[self.subject.find("]", 0, self.subject.find(":")) + 1 :]
+            .replace("\n", "")
+            .strip()
+        )
+
 
 class PatchSeries:
     def __init__(self, filepath):
@@ -65,8 +70,7 @@ class PatchSeries:
             # Keep raw copies of messages in a list
             self.messages = [message for message in mbox]
             # Get a copy of each message's core patch contents
-            self.patchdata = [Patch(message) for message in
-                              self.messages]
+            self.patchdata = [Patch(message) for message in self.messages]
 
         assert self.patchdata
         self.patch_count = len(self.patchdata)
@@ -121,6 +125,7 @@ class PatchSeries:
 
         return not invalid
 
+
 class TargetRepo:
     def __init__(self, repodir):
         self.repodir = repodir
@@ -147,13 +152,12 @@ class TargetRepo:
         except git.exc.GitCommandError as ce:
             result = ce
             self.abort_merge()
-        
+
         return result
 
     def merge_patch(self, patchfile):
         self.repo.git.execute(
-            ["git", "am", "--keep-cr", os.path.abspath(patchfile)],
-             with_exceptions=True
+            ["git", "am", "--keep-cr", os.path.abspath(patchfile)], with_exceptions=True
         )
 
     def abort_merge(self):
