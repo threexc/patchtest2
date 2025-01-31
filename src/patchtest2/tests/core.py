@@ -111,7 +111,8 @@ def test_mbox_commit_message_presence(target):
 
     # Check to see if there is content before the signoff
     match = patterns.endcommit_messages_regex.search(target.commit_message)
-    if not target.commit_message[: match.start()]:
-        result = "FAIL"
+    if match is not None:
+        if not target.commit_message[:match.start()]:
+            result = "FAIL"
 
     return PatchtestResult(target.subject, test_name, result, reason)
