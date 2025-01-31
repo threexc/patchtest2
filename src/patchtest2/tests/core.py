@@ -20,9 +20,21 @@ class PatchtestResults:
     def __init__(self, target_repo, series):
         self.target_repo = target_repo
         self.series = series
-        self.mbox_signed_off_by_results = [test_mbox_signed_off_by_presence(patch) for patch in self.series.patchdata]
-        self.mbox_shortlog_format_results = [test_mbox_shortlog_format(patch) for patch in self.series.patchdata]
-        self.mbox_commit_message_presence_results = [test_mbox_commit_message_presence(patch) for patch in self.series.patchdata]
+        self.mbox_results = dict(
+                [
+                ('signed_off_by', [test_mbox_signed_off_by_presence(patch) for
+                                    patch in self.series.patchdata]),
+                ('shortlog_format', [test_mbox_shortlog_format(patch) for patch
+                                      in self.series.patchdata]),
+                ('commit_message_presence',
+                  [test_mbox_commit_message_presence(patch) for patch in
+                   self.series.patchdata]),
+                ]
+                )
+
+    def print_mbox_results(self, tag):
+        for testresult in self.mbox_results[tag]:
+            print(testresult)
 
 # test_for_pattern()
 # @pattern: a pyparsing regex object

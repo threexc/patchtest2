@@ -8,9 +8,7 @@ def run():
     target_repo = TargetRepo(args.repodir)
     series = PatchSeries(args.patch_path)
     results = PatchtestResults(target_repo, series)
-    for testresult in results.mbox_signed_off_by_results:
-        print(testresult)
-    for testresult in results.mbox_shortlog_format_results:
-        print(testresult)
-    for testresult in results.mbox_commit_message_presence_results:
-        print(testresult)
+
+    results.print_mbox_results('signed_off_by')
+    results.print_mbox_results('shortlog_format')
+    results.print_mbox_results('commit_message_presence')
