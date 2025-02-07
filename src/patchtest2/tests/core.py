@@ -37,6 +37,10 @@ class PatchtestResults:
                     self._results(test_mbox_shortlog_format),
                 ),
                 (
+                    "shortlog_length",
+                    self._results(test_mbox_shortlog_length),
+                ),
+                (
                     "has_commit_message",
                     self._results(test_mbox_has_commit_message),
                 ),
@@ -111,6 +115,24 @@ def test_mbox_shortlog_format(target):
     return PatchtestResult(target.subject, test_name, result, reason)
 
 
+def test_mbox_shortlog_length(target):
+    shortlog = re.sub("^(\[.*?\])+ ", "", target.shortlog)
+    shortlog_len = len(shortlog)
+    test_name = "test_mbox_shortlog_length"
+    result = "PASS"
+    reason = f"Edit shortlog so that it is {patterns.mbox_shortlog_maxlength} characters or less (currently {shortlog_len} characters)"
+
+    print(target.shortlog)
+    if shortlog.startswith('Revert "'):
+        result = "SKIP"
+        reason = "No need to test revert patches"
+    else:
+        if shortlog_len > patterns.mbox_shortlog_maxlength:
+            result = "FAIL"
+
+    return PatchtestResult(target.subject, test_name, result, reason)
+
+
 def test_mbox_has_commit_message(target):
     test_name = "test_mbox_has_commit_message"
     result = "PASS"
@@ -129,10 +151,11 @@ def test_mbox_has_commit_message(target):
 
     return PatchtestResult(target.subject, test_name, result, reason)
 
+
 def test_mbox_unidiff_parse_error(target):
     test_name = "test_mbox_unidiff_parse_error"
     result = "PASS"
-    reason = f"Patch \"{target.shortlog}\" contains malformed diff lines."
+    reason = f'Patch "{target.shortlog}" contains malformed diff lines.'
 
     try:
         diff = unidiff.PatchSet.from_string(target.data.as_string())
