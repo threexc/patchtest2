@@ -48,6 +48,7 @@ class MboxReader:
 
 class Patch:
     def __init__(self, data):
+        self.data = data
         self.author = data["From"]
         self.to = data["To"]
         self.cc = data["Cc"]

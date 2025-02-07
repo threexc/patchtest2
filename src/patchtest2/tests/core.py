@@ -1,6 +1,7 @@
 import patchtest2.patterns as patterns
 import pyparsing
 import re
+import unidiff
 
 
 class PatchtestResult:
@@ -38,6 +39,10 @@ class PatchtestResults:
                 (
                     "has_commit_message",
                     self._results(test_mbox_has_commit_message),
+                ),
+                (
+                    "diff_parse",
+                    self._results(test_mbox_unidiff_parse_error),
                 ),
             ]
         )
@@ -120,6 +125,18 @@ def test_mbox_has_commit_message(target):
 
     # If we have any remaining lines, there's a commit message
     if not commit_lines:
+        result = "FAIL"
+
+    return PatchtestResult(target.subject, test_name, result, reason)
+
+def test_mbox_unidiff_parse_error(target):
+    test_name = "test_mbox_unidiff_parse_error"
+    result = "PASS"
+    reason = f"Patch \"{target.shortlog}\" contains malformed diff lines."
+
+    try:
+        diff = unidiff.PatchSet.from_string(target.data.as_string())
+    except unidiff.UnidiffParseError as upe:
         result = "FAIL"
 
     return PatchtestResult(target.subject, test_name, result, reason)
