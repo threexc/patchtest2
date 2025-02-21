@@ -39,7 +39,6 @@ def test_mbox_shortlog_length(target):
     result = "PASS"
     reason = f"Edit shortlog so that it is {patterns.mbox_shortlog_maxlength} characters or less (currently {shortlog_len} characters)"
 
-    print(target.shortlog)
     if shortlog.startswith('Revert "'):
         result = "SKIP"
         reason = "No need to test revert patches"
