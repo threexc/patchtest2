@@ -4,6 +4,7 @@ import re
 import unidiff
 from patchtest2.tests.results import patchtest_result
 
+
 @patchtest_result
 def test_mbox_has_signed_off_by(target):
     result = "FAIL"
@@ -11,6 +12,7 @@ def test_mbox_has_signed_off_by(target):
         result = "PASS"
     reason = "mbox was missing a signed-off-by tag"
     return target.subject, result, reason
+
 
 @patchtest_result
 def test_mbox_shortlog_format(target):
@@ -32,6 +34,7 @@ def test_mbox_shortlog_format(target):
 
     return target.subject, result, reason
 
+
 @patchtest_result
 def test_mbox_shortlog_length(target):
     shortlog = re.sub("^(\[.*?\])+ ", "", target.shortlog)
@@ -47,6 +50,7 @@ def test_mbox_shortlog_length(target):
             result = "FAIL"
 
     return target.subject, result, reason
+
 
 @patchtest_result
 def test_mbox_has_commit_message(target):
@@ -65,6 +69,7 @@ def test_mbox_has_commit_message(target):
         result = "FAIL"
 
     return target.subject, result, reason
+
 
 @patchtest_result
 def test_mbox_unidiff_parse_error(target):

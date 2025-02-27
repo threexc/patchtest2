@@ -23,13 +23,19 @@ class PatchtestParser(object):
         parser = argparse.ArgumentParser()
 
         target_patch_group = parser.add_mutually_exclusive_group(required=True)
+        log_type_group = parser.add_mutually_exclusive_group(required=False)
 
         target_patch_group.add_argument(
-            "--patch", metavar="PATCH", dest="patch_path", help="The patch to be tested"
+            "--patch",
+            action="store",
+            metavar="PATCH",
+            dest="patch_path",
+            help="The patch to be tested",
         )
 
         target_patch_group.add_argument(
             "--directory",
+            action="store",
             metavar="DIRECTORY",
             dest="patch_path",
             help="The directory containing patches to be tested",
@@ -60,10 +66,18 @@ class PatchtestParser(object):
             "--debug", "-d", action="store_true", help="Enable debug output"
         )
 
-        parser.add_argument(
+        log_type_group.add_argument(
             "--log-results",
+            dest="log_results",
             action="store_true",
             help='Enable logging to a file matching the target patch name with ".testresult" appended',
+        )
+
+        log_type_group.add_argument(
+            "--log-json",
+            dest="log_json",
+            action="store_true",
+            help='Enable logging to a file matching the target patch name with ".testresult" appended, in json format',
         )
 
         return parser
