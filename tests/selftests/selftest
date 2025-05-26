@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+"""
+Selftest script for patchtest2
+
+This script runs patchtest against all files in tests/selftests/files/
+and compares the results against expected outcomes based on file extensions:
+- .pass files should PASS (reported as XPASS)
+- .fail files should FAIL (reported as XFAIL)  
+- .skip files should SKIP (reported as XSKIP)
+"""
+
+import os
+import sys
+import subprocess
+import glob
+from pathlib import Path
+from collections import defaultdict
+
+def get_expected_result(filename):
+    """Determine expected result based on file extension"""
+    if filename.endswith('.pass'):
+        return 'PASS'
+    elif filename.endswith('.fail'):
+        return 'FAIL'
+    elif filename.endswith('.skip'):
+        return 'SKIP'
+    else:
+        return 'UNKNOWN'
+
+def extract_test_name(filename):
+    """Extract test name from filename, removing extension and numbering"""
+    basename = os.path.basename(filename)
+    # Remove extension (.pass, .fail, .skip)
+    name_parts = basename.split('.')
+    if len(name_parts) > 1 and name_parts[-1] in ['pass', 'fail', 'skip']:
+        # Remove the result extension
+        name_parts = name_parts[:-1]
+        # If there's a number before the extension, remove it too
+        if len(name_parts) > 1 and name_parts[-1].isdigit():
+            name_parts = name_parts[:-1]
+    
+    # Return the test function name directly from the filename
+    return '.'.join(name_parts)
+
+def run_patchtest(mbox_file):
+    """Run patchtest2 on a single mbox file and return results"""
+    try:
+        # Run patchtest with --patch flag and capture output
+        result = subprocess.run(
+            ['patchtest', '--patch', mbox_file],
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        # Parse the output to extract test results
+        test_results = {}
+
+        if result.returncode == 0 or result.stdout:
+            # Parse output lines
+            lines = result.stdout.strip().split('\n')
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+
+                # Parse format: "RESULT: test_name on [PATCH] subject (optional reason)"
+                if line.startswith(('PASS:', 'FAIL:', 'SKIP:')):
+                    parts = line.split(':', 1)
+                    if len(parts) >= 2:
+                        test_result = parts[0].strip()  # PASS, FAIL, or SKIP
+                        rest = parts[1].strip()
+
+                        # Extract test name (everything before " on [PATCH]")
+                        if ' on [PATCH]' in rest:
+                            test_name = rest.split(' on [PATCH]')[0].strip()
+                            test_results[test_name] = test_result
+                        else:
+                            # Fallback: use first word as test name
+                            test_name = rest.split()[0] if rest.split() else 'UNKNOWN'
+                            test_results[test_name] = test_result
+
+        # Handle error cases
+        if not test_results:
+            if result.stderr:
+                test_results['ERROR'] = 'ERROR'
+            elif result.returncode != 0:
+                test_results['UNKNOWN'] = 'FAIL'
+            else:
+                test_results['NO_OUTPUT'] = 'ERROR'
+
+        return test_results
+
+    except subprocess.TimeoutExpired:
+        return {'TIMEOUT': 'ERROR'}
+    except Exception as e:
+        return {'EXCEPTION': 'ERROR'}
+
+def map_result_to_x_result(actual, expected):
+    """Map actual result to X-result based on expectation"""
+    if expected == 'PASS' and actual == 'PASS':
+        return 'XPASS'
+    elif expected == 'FAIL' and actual == 'FAIL':
+        return 'XFAIL'
+    elif expected == 'SKIP' and actual == 'SKIP':
+        return 'XSKIP'
+    elif actual == 'PASS':
+        return 'PASS'
+    elif actual == 'FAIL':
+        return 'FAIL'
+    elif actual == 'SKIP':
+        return 'SKIP'
+    else:
+        return 'ERROR'
+
+def main():
+    # Find the tests directory
+    script_dir = Path(__file__).parent
+    test_files_dir = script_dir / 'files'
+    
+    if not test_files_dir.exists():
+        print(f"Error: Test files directory not found: {test_files_dir}")
+        sys.exit(1)
+    
+    # Find all test files
+    test_files = []
+    for ext in ['*.pass', '*.fail', '*.skip']:
+        test_files.extend(glob.glob(str(test_files_dir / ext)))
+    
+    if not test_files:
+        print(f"Error: No test files found in {test_files_dir}")
+        sys.exit(1)
+    
+    # Sort files for consistent output
+    test_files.sort()
+    
+    # Track results
+    results = []
+    counters = defaultdict(int)
+    
+    print("Running selftests...")
+    
+    for test_file in test_files:
+        expected = get_expected_result(test_file)
+        test_name = extract_test_name(test_file)
+        filename = os.path.basename(test_file)
+        
+        # Run patchtest on this file
+        test_results = run_patchtest(test_file)
+        
+        # Find the specific test result for this file's test
+        if test_results and test_name in test_results:
+            actual_result = test_results[test_name]
+            x_result = map_result_to_x_result(actual_result, expected)
+            
+            # Format output line
+            output_line = f"{x_result}: {test_name} (file: {filename})"
+            results.append(output_line)
+            counters[x_result] += 1
+        else:
+            # Handle case where the specific test was not found in results
+            x_result = 'ERROR'
+            output_line = f"{x_result}: {test_name} (file: {filename}) - Test not found in patchtest output"
+            results.append(output_line)
+            counters[x_result] += 1
+    
+    # Print all results
+    for result in results:
+        print(result)
+    
+    # Print summary
+    total = sum(counters.values())
+    print("\n" + "=" * 76)
+    print(f"{'Testsuite summary for patchtest':^76}")
+    print("=" * 76)
+    print(f"# TOTAL: {total}")
+    print(f"# XPASS: {counters['XPASS']}")
+    print(f"# XFAIL: {counters['XFAIL']}")
+    print(f"# XSKIP: {counters['XSKIP']}")
+    print(f"# PASS: {counters['PASS']}")
+    print(f"# FAIL: {counters['FAIL']}")
+    print(f"# SKIP: {counters['SKIP']}")
+    print(f"# ERROR: {counters['ERROR']}")
+    print("=" * 76)
+    
+    # Return appropriate exit code
+    if counters['FAIL'] > 0 or counters['ERROR'] > 0:
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+if __name__ == '__main__':
+    main()
