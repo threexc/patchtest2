@@ -66,6 +66,20 @@ class PatchtestParser(object):
             "--debug", "-d", action="store_true", help="Enable debug output"
         )
 
+        # Add --suites/-s argument for comma-separated list of suite names
+        parser.add_argument(
+            '--suites', '-s',
+            type=str,
+            help='Comma-separated list of test suite module names to run (core suite is always included)'
+        )
+
+        # Add --module-path/-m argument that can be specified multiple times
+        parser.add_argument(
+            '--module-paths', '-m',
+            type=str,
+            help='Comma-separated list of additional paths to search for test modules (src/patchtest2/tests is always included)'
+        )
+
         log_type_group.add_argument(
             "--log-results",
             dest="log_results",
