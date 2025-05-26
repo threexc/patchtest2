@@ -76,6 +76,7 @@ class PatchtestParser(object):
         # Add --module-path/-m argument that can be specified multiple times
         parser.add_argument(
             '--module-paths', '-m',
+            action='append',
             type=str,
             help='Comma-separated list of additional paths to search for test modules (src/patchtest2/tests is always included)'
         )
