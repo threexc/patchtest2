@@ -1,7 +1,6 @@
 import inspect
 import functools
 
-
 def patchtest_result(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):

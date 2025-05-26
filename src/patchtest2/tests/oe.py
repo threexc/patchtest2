@@ -2,7 +2,7 @@ import patchtest2.patterns as patterns
 import pyparsing
 import re
 import unidiff
-from patchtest2.tests.results import patchtest_result
+from patchtest2.results import patchtest_result
 
 @patchtest_result
 def test_mbox_commit_message_user_tags(target):

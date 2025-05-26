@@ -31,7 +31,7 @@ dependencies = [
 ]
 
 [project.scripts]
-patchtest = "patchtest2.tests.patchtest:run"
+patchtest = "patchtest2.patchtest:run"
 
 [project.urls]
 Documentation = "https://github.com/Trevor Gamblin/patchtest2#readme"

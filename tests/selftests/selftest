@@ -47,7 +47,7 @@ def run_patchtest(mbox_file):
     try:
         # Run patchtest with --patch flag and capture output
         result = subprocess.run(
-            ['patchtest', '--patch', mbox_file],
+            ['patchtest', '--patch', mbox_file, '--suites', 'core,oe'],
             capture_output=True,
             text=True,
             timeout=30
