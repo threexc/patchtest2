@@ -83,34 +83,6 @@ def test_mbox_unidiff_parse_error(target):
 
     return target.subject, result, reason
 
-@patchtest_result
-def test_mbox_bugzilla_entry_format(target):
-    """Test for proper Bugzilla entry format in commit messages"""
-    result = "PASS"
-    reason = None
-
-    # Check if there's any bugzilla reference
-    if not patterns.mbox_bugzilla.search_string(target.commit_message):
-        result = "SKIP"
-        reason = "No bug ID found"
-    elif not patterns.mbox_bugzilla_validation.search_string(target.commit_message):
-        result = "FAIL"
-        reason = 'Bugzilla issue ID is not correctly formatted - specify it with format: "[YOCTO #<bugzilla ID>]"'
-
-    return target.subject, result, reason
-
-@patchtest_result
-def test_mbox_author_valid(target):
-    """Test for valid patch author"""
-    result = "PASS"
-    reason = f'Invalid author {target.author}. Resend the series with a valid patch author'
-
-    for invalid in patterns.invalid_submitters:
-        if invalid.search_string(target.author):
-            result = "FAIL"
-            break
-
-    return target.subject, result, reason
 
 @patchtest_result
 def test_mbox_revert_signed_off_by_exception(target):
@@ -128,6 +100,7 @@ def test_mbox_revert_signed_off_by_exception(target):
         reason = 'Mbox is missing Signed-off-by. Add it manually or with "git commit --amend -s"'
 
     return target.subject, result, reason
+
 
 # Additional helper test that might be useful
 @patchtest_result

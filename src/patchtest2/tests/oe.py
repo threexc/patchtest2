@@ -15,6 +15,7 @@ def test_mbox_commit_message_user_tags(target):
 
     return target.subject, result, reason
 
+
 @patchtest_result
 def test_mbox_non_auh_upgrade(target):
     """Test that patch is not from AUH (Auto Upgrade Helper)"""
@@ -25,6 +26,7 @@ def test_mbox_non_auh_upgrade(target):
         result = "FAIL"
 
     return target.subject, result, reason
+
 
 @patchtest_result
 def test_mbox_target_mailing_list_meta_project(target):
@@ -39,3 +41,32 @@ def test_mbox_target_mailing_list_meta_project(target):
 
     return target.subject, result, reason
 
+
+@patchtest_result
+def test_mbox_bugzilla_entry_format(target):
+    """Test for proper Bugzilla entry format in commit messages"""
+    result = "PASS"
+    reason = None
+
+    # Check if there's any bugzilla reference
+    if not patterns.mbox_bugzilla.search_string(target.commit_message):
+        result = "SKIP"
+        reason = "No bug ID found"
+    elif not patterns.mbox_bugzilla_validation.search_string(target.commit_message):
+        result = "FAIL"
+        reason = 'Bugzilla issue ID is not correctly formatted - specify it with format: "[YOCTO #<bugzilla ID>]"'
+
+    return target.subject, result, reason
+
+@patchtest_result
+def test_mbox_author_valid(target):
+    """Test for valid patch author"""
+    result = "PASS"
+    reason = f'Invalid author {target.author}. Resend the series with a valid patch author'
+
+    for invalid in patterns.invalid_submitters:
+        if invalid.search_string(target.author):
+            result = "FAIL"
+            break
+
+    return target.subject, result, reason
