@@ -21,8 +21,8 @@ class Patchtest:
                 if suite not in self.suites:
                     self.suites.append(suite)
 
-        # Always include src/patchtest2/tests, then add any additional paths
-        self.module_paths = ["src/patchtest2/tests"]
+        # Always include src/patchtest2/suites, then add any additional paths
+        self.module_paths = ["src/patchtest2/suites"]
         if module_paths:
             # Add additional paths, avoiding duplicates
             for path in module_paths:
@@ -47,12 +47,12 @@ class Patchtest:
                     module_found = True
                     # Load the module dynamically
                     spec = importlib.util.spec_from_file_location(
-                        f"patchtest2.tests.{suite_name}", module_file
+                        f"patchtest2.suites.{suite_name}", module_file
                     )
                     module = importlib.util.module_from_spec(spec)
 
                     # Add to sys.modules to handle imports within the module
-                    sys.modules[f"patchtest2.tests.{suite_name}"] = module
+                    sys.modules[f"patchtest2.suites.{suite_name}"] = module
                     spec.loader.exec_module(module)
 
                     # Extract test functions from the module

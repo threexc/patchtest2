@@ -11,7 +11,7 @@
 import os
 import argparse
 
-default_testdir = os.path.abspath(os.path.dirname(__file__) + "/tests")
+default_testdir = os.path.abspath(os.path.dirname(__file__) + "/suites")
 default_repodir = os.path.abspath(os.path.dirname(__file__) + "/../../..")
 
 
@@ -80,7 +80,7 @@ class PatchtestParser(object):
             "-m",
             dest="module_paths",
             action="append",
-            help="Path to search for test modules (src/patchtest2/tests is always included; can be specified multiple times)",
+            help="Path to search for test modules (src/patchtest2/suites is always included; can be specified multiple times)",
         )
 
         log_type_group.add_argument(
