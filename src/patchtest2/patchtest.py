@@ -14,7 +14,7 @@ class Patchtest:
         self.series = series
 
         # Always include 'core' suite, then add any additional suites
-        self.suites = ['core']
+        self.suites = ["core"]
         if suites:
             # Add additional suites, avoiding duplicates
             for suite in suites:
@@ -22,7 +22,7 @@ class Patchtest:
                     self.suites.append(suite)
 
         # Always include src/patchtest2/tests, then add any additional paths
-        self.module_paths = ['src/patchtest2/tests']
+        self.module_paths = ["src/patchtest2/tests"]
         if module_paths:
             # Add additional paths, avoiding duplicates
             for path in module_paths:
@@ -47,8 +47,7 @@ class Patchtest:
                     module_found = True
                     # Load the module dynamically
                     spec = importlib.util.spec_from_file_location(
-                        f"patchtest2.tests.{suite_name}",
-                        module_file
+                        f"patchtest2.tests.{suite_name}", module_file
                     )
                     module = importlib.util.module_from_spec(spec)
 
@@ -58,7 +57,8 @@ class Patchtest:
 
                     # Extract test functions from the module
                     test_functions = {
-                        k: v for (k, v) in inspect.getmembers(module, inspect.isfunction)
+                        k: v
+                        for (k, v) in inspect.getmembers(module, inspect.isfunction)
                         if k != "patchtest_result" and k.startswith("test_")
                     }
 
@@ -69,7 +69,9 @@ class Patchtest:
                     break  # Found the module, no need to check other paths
 
             if not module_found:
-                print(f"Warning: Suite '{suite_name}' not found in any of the specified module paths")
+                print(
+                    f"Warning: Suite '{suite_name}' not found in any of the specified module paths"
+                )
                 continue
 
             self.results[suite_name] = suite_results
@@ -123,12 +125,12 @@ def run():
 
     # Parse suites argument
     suites = None
-    if hasattr(args, 'suites') and args.suites:
-        suites = [suite.strip() for suite in args.suites.split(',')]
+    if hasattr(args, "suites") and args.suites:
+        suites = [suite.strip() for suite in args.suites.split(",")]
 
     # Parse module paths argument
     module_paths = None
-    if hasattr(args, 'module_paths') and args.module_paths:
+    if hasattr(args, "module_paths") and args.module_paths:
         module_paths = args.module_paths
 
     target_repo = TargetRepo(args.repodir)

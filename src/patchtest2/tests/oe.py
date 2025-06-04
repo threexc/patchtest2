@@ -4,6 +4,7 @@ import re
 import unidiff
 from patchtest2.results import patchtest_result
 
+
 @patchtest_result
 def test_mbox_commit_message_user_tags(target):
     """Test for GitHub-style username tags (@username) in commit messages"""
@@ -58,11 +59,14 @@ def test_mbox_bugzilla_entry_format(target):
 
     return target.subject, result, reason
 
+
 @patchtest_result
 def test_mbox_author_valid(target):
     """Test for valid patch author"""
     result = "PASS"
-    reason = f'Invalid author {target.author}. Resend the series with a valid patch author'
+    reason = (
+        f"Invalid author {target.author}. Resend the series with a valid patch author"
+    )
 
     for invalid in patterns.invalid_submitters:
         if invalid.search_string(target.author):

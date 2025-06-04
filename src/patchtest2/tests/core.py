@@ -113,7 +113,9 @@ def test_mbox_shortlog_revert_format(target):
         # Could add specific revert format validation here if needed
         if not target.shortlog.endswith('"'):
             result = "FAIL"
-            reason = 'Revert commit shortlog should be in format: Revert "original shortlog"'
+            reason = (
+                'Revert commit shortlog should be in format: Revert "original shortlog"'
+            )
     else:
         result = "SKIP"
         reason = "Not a revert commit"
