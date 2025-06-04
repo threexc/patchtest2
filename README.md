@@ -39,7 +39,8 @@ pip install .
 
 ## Examples
 
-Test a patch (the example file is an internal selftest):
+Test a patch using only the default test suite (the example file is an internal
+selftest):
 
 ```console
 (venv) tgamblin@megalith ~/workspace/yocto/patchtest2 (main)$ patchtest --patch tests/selftests/files/test_mbox_has_signed_off_by.1.fail
