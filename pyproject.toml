@@ -9,6 +9,9 @@ description = ''
 readme = "README.md"
 requires-python = ">=3.8"
 license = "MIT"
+license-files = [
+    "LICENSE.txt",
+]
 keywords = []
 authors = [
   { name = "Trevor Gamblin", email = "tgamblin@baylibre.com" },
