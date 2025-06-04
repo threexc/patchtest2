@@ -129,7 +129,7 @@ def run():
     # Parse module paths argument
     module_paths = None
     if hasattr(args, 'module_paths') and args.module_paths:
-        module_paths = [path.strip() for path in args.module_paths.split(',')]
+        module_paths = args.module_paths
 
     target_repo = TargetRepo(args.repodir)
     series = PatchSeries(args.patch_path)
