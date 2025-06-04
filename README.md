@@ -39,13 +39,36 @@ pip install .
 
 ## Examples
 
-Test a patch (the sample file is generated using `git format-patch` on commit `d7de60340ec9` in this repository):
+Test a patch (the example file is an internal selftest):
 
 ```console
-(venv) tgamblin@workbox:~/git/patchtest2$ patchtest --patch 0001-README.md-update-Installation-instructions.patch
-PASS: test_mbox_signed_off_by_presence on [PATCH] README.md: update Installation instructions
-PASS: test_mbox_shortlog_format on [PATCH] README.md: update Installation instructions
-FAIL: test_mbox_commit_message_presence on [PATCH] README.md: update Installation instructions (Please include a commit message on your patch explaining the change)
+(venv) tgamblin@megalith ~/workspace/yocto/patchtest2 (main)$ patchtest --patch tests/selftests/files/test_mbox_has_signed_off_by.1.fail
+PASS: test_mbox_has_commit_message on [PATCH] selftest-hello: fix CVE-1234-56789
+FAIL: test_mbox_has_signed_off_by on [PATCH] selftest-hello: fix CVE-1234-56789 (mbox was missing a signed-off-by tag)
+FAIL: test_mbox_revert_signed_off_by_exception on [PATCH] selftest-hello: fix CVE-1234-56789 (Mbox is missing Signed-off-by. Add it manually or with "git commit --amend -s")
+PASS: test_mbox_shortlog_format on [PATCH] selftest-hello: fix CVE-1234-56789
+PASS: test_mbox_shortlog_length on [PATCH] selftest-hello: fix CVE-1234-56789
+SKIP: test_mbox_shortlog_revert_format on [PATCH] selftest-hello: fix CVE-1234-56789 (Not a revert commit)
+PASS: test_mbox_unidiff_parse_error on [PATCH] selftest-hello: fix CVE-1234-56789
+```
+
+Test the same patch and include the "oe" testsuite (assuming it's included in
+the default test path):
+
+```console
+(venv) tgamblin@megalith ~/workspace/yocto/patchtest2 (main)$ patchtest --patch tests/selftests/files/test_mbox_has_signed_off_by.1.fail --suites oe
+PASS: test_mbox_has_commit_message on [PATCH] selftest-hello: fix CVE-1234-56789
+FAIL: test_mbox_has_signed_off_by on [PATCH] selftest-hello: fix CVE-1234-56789 (mbox was missing a signed-off-by tag)
+FAIL: test_mbox_revert_signed_off_by_exception on [PATCH] selftest-hello: fix CVE-1234-56789 (Mbox is missing Signed-off-by. Add it manually or with "git commit --amend -s")
+PASS: test_mbox_shortlog_format on [PATCH] selftest-hello: fix CVE-1234-56789
+PASS: test_mbox_shortlog_length on [PATCH] selftest-hello: fix CVE-1234-56789
+SKIP: test_mbox_shortlog_revert_format on [PATCH] selftest-hello: fix CVE-1234-56789 (Not a revert commit)
+PASS: test_mbox_unidiff_parse_error on [PATCH] selftest-hello: fix CVE-1234-56789
+PASS: test_mbox_author_valid on [PATCH] selftest-hello: fix CVE-1234-56789
+SKIP: test_mbox_bugzilla_entry_format on [PATCH] selftest-hello: fix CVE-1234-56789 (No bug ID found)
+PASS: test_mbox_commit_message_user_tags on [PATCH] selftest-hello: fix CVE-1234-56789
+PASS: test_mbox_non_auh_upgrade on [PATCH] selftest-hello: fix CVE-1234-56789
+PASS: test_mbox_target_mailing_list_meta_project on [PATCH] selftest-hello: fix CVE-1234-56789
 ```
 
 ## License
