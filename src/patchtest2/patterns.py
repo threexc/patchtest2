@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2024 Trevor Gamblin <tgamblin@baylibre.com>
 #
-# SPDX-License-Identifier: GPL-2.0-only
+# SPDX-License-Identifier: MIT
 
 import pyparsing
 import re

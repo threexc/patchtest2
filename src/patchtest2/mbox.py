@@ -7,7 +7,7 @@
 #
 # Copyright (C) Trevor Gamblin <tgamblin@baylibre.com>
 #
-# SPDX-License-Identifier: GPL-2.0-only
+# SPDX-License-Identifier: MIT
 #
 
 import email
@@ -76,11 +76,6 @@ class PatchSeries:
         assert self.patchdata
         self.patch_count = len(self.patchdata)
         self.path = filepath
-
-        @property
-        def path(self):
-            return self.path
-
         self.branch = self.get_branch()
 
     def get_branch(self):
