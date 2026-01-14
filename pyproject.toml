@@ -5,25 +5,24 @@ build-backend = "hatchling.build"
 [project]
 name = "patchtest2"
 dynamic = ["version"]
-description = ''
+description = 'Modern refactor of the Yocto Project patchtest tool for validating patches'
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = "MIT"
 license-files = [
     "LICENSE.txt",
 ]
-keywords = []
+keywords = ["patch", "testing", "yocto", "openembedded"]
 authors = [
   { name = "Trevor Gamblin", email = "tgamblin@baylibre.com" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
@@ -33,13 +32,27 @@ dependencies = [
   "unidiff",
 ]
 
+[project.optional-dependencies]
+dev = [
+  "black>=23.0.0",
+  "isort>=5.12.0",
+  "mypy>=1.0.0",
+  "pytest>=7.4.0",
+  "pytest-cov>=4.1.0",
+  "types-setuptools",
+]
+test = [
+  "pytest>=7.4.0",
+  "pytest-cov>=4.1.0",
+]
+
 [project.scripts]
 patchtest = "patchtest2.patchtest:run"
 
 [project.urls]
-Documentation = "https://github.com/Trevor Gamblin/patchtest2#readme"
-Issues = "https://github.com/Trevor Gamblin/patchtest2/issues"
-Source = "https://github.com/Trevor Gamblin/patchtest2"
+Documentation = "https://github.com/threexc/patchtest2#readme"
+Issues = "https://github.com/threexc/patchtest2/issues"
+Source = "https://github.com/threexc/patchtest2"
 
 [tool.hatch.version]
 path = "src/patchtest2/__about__.py"
@@ -72,7 +85,7 @@ exclude_lines = [
 
 [tool.black]
 line-length = 88
-target-version = ["py313"]
+target-version = ["py310"]
 include = "\\.pyi?$"
 extend-exclude = """
 /(
@@ -96,7 +109,7 @@ line_length = 88
 known_first_party = ["patchtest2"]
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
