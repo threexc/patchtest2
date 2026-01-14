@@ -26,7 +26,7 @@ class MboxReader:
         self.handle = open(filepath, "rb")
         assert self.handle.readline().startswith(b"From ")
 
-    def __enter__(self) -> 'MboxReader':
+    def __enter__(self) -> "MboxReader":
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback) -> None:

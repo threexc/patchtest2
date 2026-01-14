@@ -22,7 +22,7 @@ class Patchtest:
         target_repo: TargetRepo,
         series: PatchSeries,
         suites: Optional[List[str]] = None,
-        module_paths: Optional[List[str]] = None
+        module_paths: Optional[List[str]] = None,
     ) -> None:
         self.target_repo = target_repo
         self.series = series
@@ -139,10 +139,7 @@ def run() -> None:
 
     # Configure logging
     log_level = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(
-        level=log_level,
-        format='%(levelname)s: %(message)s'
-    )
+    logging.basicConfig(level=log_level, format="%(levelname)s: %(message)s")
 
     # Parse suites argument
     suites = None
