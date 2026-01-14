@@ -1,6 +1,7 @@
 """Unit tests for patchtest2 results module."""
 
 import pytest
+
 from patchtest2.results import patchtest_result
 
 

@@ -9,12 +9,13 @@ and compares the results against expected outcomes based on file extensions:
 - .skip files should SKIP (reported as XSKIP)
 """
 
-import os
-import sys
-import subprocess
 import glob
-from pathlib import Path
+import os
+import subprocess
+import sys
 from collections import defaultdict
+from pathlib import Path
+
 
 def get_expected_result(filename):
     """Determine expected result based on file extension"""

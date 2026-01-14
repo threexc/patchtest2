@@ -1,7 +1,8 @@
 """Unit tests for patchtest2 patterns module."""
 
-import pytest
 import pyparsing
+import pytest
+
 from patchtest2 import patterns
 
 
