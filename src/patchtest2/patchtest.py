@@ -1,11 +1,15 @@
 import inspect
 import json
+import logging
 import os
 import sys
 import importlib.util
 from pathlib import Path
 from patchtest2.parser import PatchtestParser
 from patchtest2.mbox import PatchSeries, TargetRepo
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 # Calculate default suite path relative to this file
 DEFAULT_SUITE_PATH = Path(__file__).parent / "suites"
@@ -72,8 +76,8 @@ class Patchtest:
                     break  # Found the module, no need to check other paths
 
             if not module_found:
-                print(
-                    f"Warning: Suite '{suite_name}' not found in any of the specified module paths"
+                logger.warning(
+                    f"Suite '{suite_name}' not found in any of the specified module paths: {self.module_paths}"
                 )
                 continue
 
@@ -125,6 +129,13 @@ def run():
     """Main entry point for patchtest"""
     parser = PatchtestParser.get_parser()
     args = parser.parse_args()
+
+    # Configure logging
+    log_level = logging.DEBUG if args.debug else logging.INFO
+    logging.basicConfig(
+        level=log_level,
+        format='%(levelname)s: %(message)s'
+    )
 
     # Parse suites argument
     suites = None
