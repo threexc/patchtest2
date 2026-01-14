@@ -58,7 +58,7 @@ class TestPatchtestResultDecorator:
         def dummy_test(patch):
             return "[PATCH] test", "PASS"  # Only 2 elements
 
-        with pytest.raises(ValueError, match="must return.*3 values"):
+        with pytest.raises(ValueError, match=r"must return \(subject, result, reason\), got 2 values"):
             dummy_test(None)
 
     def test_invalid_result_value_raises_error(self):
