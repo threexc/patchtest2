@@ -9,6 +9,7 @@ class TestPatchtestResultDecorator:
 
     def test_pass_result_formatting(self):
         """Test that PASS results are formatted correctly."""
+
         @patchtest_result
         def dummy_test(patch):
             return "[PATCH] test", "PASS", None
@@ -19,6 +20,7 @@ class TestPatchtestResultDecorator:
 
     def test_fail_result_formatting(self):
         """Test that FAIL results include reason."""
+
         @patchtest_result
         def dummy_test(patch):
             return "[PATCH] test", "FAIL", "missing something"
@@ -29,6 +31,7 @@ class TestPatchtestResultDecorator:
 
     def test_skip_result_formatting(self):
         """Test that SKIP results include reason."""
+
         @patchtest_result
         def dummy_test(patch):
             return "[PATCH] test", "SKIP", "not applicable"
@@ -39,6 +42,7 @@ class TestPatchtestResultDecorator:
 
     def test_invalid_return_type_raises_error(self):
         """Test that non-tuple return raises ValueError."""
+
         @patchtest_result
         def dummy_test(patch):
             return "not a tuple"
@@ -48,6 +52,7 @@ class TestPatchtestResultDecorator:
 
     def test_wrong_tuple_length_raises_error(self):
         """Test that wrong-length tuple raises ValueError."""
+
         @patchtest_result
         def dummy_test(patch):
             return "[PATCH] test", "PASS"  # Only 2 elements
@@ -57,6 +62,7 @@ class TestPatchtestResultDecorator:
 
     def test_invalid_result_value_raises_error(self):
         """Test that invalid result value raises ValueError."""
+
         @patchtest_result
         def dummy_test(patch):
             return "[PATCH] test", "INVALID", "reason"
@@ -66,6 +72,7 @@ class TestPatchtestResultDecorator:
 
     def test_function_name_preserved(self):
         """Test that decorator preserves function name."""
+
         @patchtest_result
         def my_custom_test(patch):
             return "[PATCH] test", "PASS", None
@@ -74,6 +81,7 @@ class TestPatchtestResultDecorator:
 
     def test_docstring_preserved(self):
         """Test that decorator preserves function docstring."""
+
         @patchtest_result
         def documented_test(patch):
             """This is a test docstring."""
@@ -83,6 +91,7 @@ class TestPatchtestResultDecorator:
 
     def test_pass_with_none_reason(self):
         """Test that PASS works correctly with None reason."""
+
         @patchtest_result
         def dummy_test(patch):
             return "[PATCH] test", "PASS", None
@@ -92,6 +101,7 @@ class TestPatchtestResultDecorator:
 
     def test_fail_with_multiline_reason(self):
         """Test that FAIL handles multiline reasons."""
+
         @patchtest_result
         def dummy_test(patch):
             return "[PATCH] test", "FAIL", "line1\nline2"
