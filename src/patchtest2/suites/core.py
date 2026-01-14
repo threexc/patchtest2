@@ -1,12 +1,12 @@
 import re
+from typing import Tuple
 
 import pyparsing
 import unidiff
 
 import patchtest2.patterns as patterns  # type: ignore[import-untyped]
-from patchtest2.results import patchtest_result
 from patchtest2.mbox import Patch
-from typing import Tuple
+from patchtest2.results import patchtest_result
 
 
 @patchtest_result

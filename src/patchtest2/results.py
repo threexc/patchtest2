@@ -1,6 +1,6 @@
 import functools
 import inspect
-from typing import Any, Tuple, Callable
+from typing import Any, Callable, Tuple
 
 
 def patchtest_result(func: Callable[..., Tuple[str, str, str]]) -> Callable[..., str]:

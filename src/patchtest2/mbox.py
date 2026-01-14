@@ -15,7 +15,7 @@ import os
 import re
 from dataclasses import dataclass
 from email.message import Message
-from typing import List, Optional, Iterator, Any
+from typing import Any, Iterator, List, Optional
 
 import git
 
