@@ -5,6 +5,7 @@ import os
 import sys
 import importlib.util
 from pathlib import Path
+from typing import List, Optional, Dict, Any
 from patchtest2.parser import PatchtestParser
 from patchtest2.mbox import PatchSeries, TargetRepo
 
@@ -16,7 +17,13 @@ DEFAULT_SUITE_PATH = Path(__file__).parent / "suites"
 
 
 class Patchtest:
-    def __init__(self, target_repo, series, suites=None, module_paths=None):
+    def __init__(
+        self,
+        target_repo: TargetRepo,
+        series: PatchSeries,
+        suites: Optional[List[str]] = None,
+        module_paths: Optional[List[str]] = None
+    ) -> None:
         self.target_repo = target_repo
         self.series = series
 
@@ -37,10 +44,10 @@ class Patchtest:
                     self.module_paths.append(path)
 
         # Load all test modules and their functions
-        self.results = {}
+        self.results: Dict[str, Dict[str, List[str]]] = {}
         self._load_test_modules()
 
-    def _load_test_modules(self):
+    def _load_test_modules(self) -> None:
         """Load test functions from all specified suites and module paths"""
         for suite_name in self.suites:
             suite_results = {}
@@ -83,26 +90,26 @@ class Patchtest:
 
             self.results[suite_name] = suite_results
 
-    def _results(self, testname):
+    def _results(self, testname: Any) -> List[str]:
         """Run a test function against all patches in the series"""
         return [testname(patch) for patch in self.series.patchdata]
 
-    def _print_result(self, category, tag):
+    def _print_result(self, category: str, tag: str) -> None:
         """Print results for a specific test function"""
         for value in self.results[category][tag]:
             print(value)
 
-    def _print_results(self, category):
+    def _print_results(self, category: str) -> None:
         """Print all results for a specific suite"""
         for tag in self.results[category].keys():
             self._print_result(category, tag)
 
-    def print_results(self):
+    def print_results(self) -> None:
         """Print all results from all suites"""
         for category in self.results.keys():
             self._print_results(category)
 
-    def _log_results(self, logfile):
+    def _log_results(self, logfile: str) -> None:
         """Log results to a text file"""
         result_str = ""
         for category in self.results.keys():
@@ -112,12 +119,12 @@ class Patchtest:
         with open(logfile + ".testresult", "w") as f:
             f.write(result_str)
 
-    def _log_json(self, logfile):
+    def _log_json(self, logfile: str) -> None:
         """Log results to a JSON file"""
         with open(logfile + ".testresult", "w") as f:
             f.write(json.dumps(self.results, indent=4, sort_keys=True))
 
-    def log_results(self, logfile, mode=None):
+    def log_results(self, logfile: str, mode: Optional[str] = None) -> None:
         """Log results in specified format"""
         if mode == "json":
             self._log_json(logfile)
@@ -125,7 +132,7 @@ class Patchtest:
             self._log_results(logfile)
 
 
-def run():
+def run() -> None:
     """Main entry point for patchtest"""
     parser = PatchtestParser.get_parser()
     args = parser.parse_args()

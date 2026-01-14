@@ -11,23 +11,25 @@
 #
 
 import email
+from email.message import Message
 import git
 import os
 import re
+from typing import List, Optional
 
 from dataclasses import dataclass
 
 
 # From: https://stackoverflow.com/questions/59681461/read-a-big-mbox-file-with-python
 class MboxReader:
-    def __init__(self, filepath):
+    def __init__(self, filepath: str) -> None:
         self.handle = open(filepath, "rb")
         assert self.handle.readline().startswith(b"From ")
 
-    def __enter__(self):
+    def __enter__(self) -> 'MboxReader':
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback):
+    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
         self.handle.close()
 
     def __iter__(self):
@@ -47,18 +49,18 @@ class MboxReader:
 
 
 class Patch:
-    def __init__(self, data):
+    def __init__(self, data: Message) -> None:
         self.data = data
-        self.author = data["From"]
-        self.to = data["To"]
-        self.cc = data["Cc"]
-        self.subject = data["Subject"]
-        self.split_body = re.split("---", data.get_payload(), maxsplit=1)
-        self.commit_message = self.split_body[0]
-        self.diff = self.split_body[1]
+        self.author: str = data["From"]
+        self.to: str = data["To"]
+        self.cc: str = data["Cc"]
+        self.subject: str = data["Subject"]
+        self.split_body: List[str] = re.split("---", data.get_payload(), maxsplit=1)
+        self.commit_message: str = self.split_body[0]
+        self.diff: str = self.split_body[1]
         # get the shortlog, but make sure to exclude bracketed prefixes
         # before the colon, and remove extra whitespace/newlines
-        self.shortlog = (
+        self.shortlog: str = (
             self.subject[self.subject.find("]", 0, self.subject.find(":")) + 1 :]
             .replace("\n", "")
             .strip()
@@ -66,19 +68,19 @@ class Patch:
 
 
 class PatchSeries:
-    def __init__(self, filepath):
+    def __init__(self, filepath: str) -> None:
         with MboxReader(filepath) as mbox:
             # Keep raw copies of messages in a list
-            self.messages = [message for message in mbox]
+            self.messages: List[Message] = [message for message in mbox]
             # Get a copy of each message's core patch contents
-            self.patchdata = [Patch(message) for message in self.messages]
+            self.patchdata: List[Patch] = [Patch(message) for message in self.messages]
 
         assert self.patchdata
-        self.patch_count = len(self.patchdata)
-        self.path = filepath
-        self.branch = self.get_branch()
+        self.patch_count: int = len(self.patchdata)
+        self.path: str = filepath
+        self.branch: str = self.get_branch()
 
-    def get_branch(self):
+    def get_branch(self) -> str:
         fullprefix = ""
         pattern = re.compile(r"(\[.*\])", re.DOTALL)
 
@@ -107,7 +109,7 @@ class PatchSeries:
             return "master"
 
     @staticmethod
-    def valid_branch(branch):
+    def valid_branch(branch: str) -> bool:
         """Check if branch is valid name"""
         lbranch = branch.lower()
 
@@ -123,20 +125,20 @@ class PatchSeries:
 
 
 class TargetRepo:
-    def __init__(self, repodir):
-        self.repodir = repodir
-        self.repo = git.Repo.init(repodir)
-        self.start_branch = self.repo.active_branch.name
-        self.working_branch = f"patchtest_{os.getpid()}"
+    def __init__(self, repodir: str) -> None:
+        self.repodir: str = repodir
+        self.repo: git.Repo = git.Repo.init(repodir)
+        self.start_branch: str = self.repo.active_branch.name
+        self.working_branch: str = f"patchtest_{os.getpid()}"
 
-    def checkout_working_branch(self, target_branch):
+    def checkout_working_branch(self, target_branch: str) -> None:
         # create working branch. Use the '-B' flag so that we just
         # check out the existing one if it's there
         self.repo.git.execute(
             ["git", "checkout", "-B", self.working_branch, target_branch]
         )
 
-    def can_be_merged(self, patchfile):
+    def can_be_merged(self, patchfile: str):
         # We don't actually want to propagate the error if the patch
         # can't merge, so put a try-except around it. However, if the
         # check fails, return the error message so that it can be parsed
@@ -151,14 +153,14 @@ class TargetRepo:
 
         return result
 
-    def merge_patch(self, patchfile):
+    def merge_patch(self, patchfile: str) -> None:
         self.repo.git.execute(
             ["git", "am", "--keep-cr", os.path.abspath(patchfile)], with_exceptions=True
         )
 
-    def abort_merge(self):
+    def abort_merge(self) -> None:
         self.repo.git.execute(["git", "am", "--abort"])
 
-    def cleanup(self):
+    def cleanup(self) -> None:
         self.repo.git.execute(["git", "checkout", self.start_branch])
         self.repo.git.execute(["git", "branch", "-D", self.working_branch])
