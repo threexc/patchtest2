@@ -4,8 +4,9 @@
 #
 # SPDX-License-Identifier: MIT
 
-import pyparsing
 import re
+
+import pyparsing
 
 # general
 colon = pyparsing.Literal(":")

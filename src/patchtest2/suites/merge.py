@@ -11,7 +11,9 @@
 
 import os
 import tempfile
+
 import git
+
 from patchtest2.mbox import TargetRepo
 from patchtest2.results import patchtest_result
 

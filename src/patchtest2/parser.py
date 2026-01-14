@@ -8,8 +8,8 @@
 # SPDX-License-Identifier: MIT
 #
 
-import os
 import argparse
+import os
 from pathlib import Path
 
 # Calculate paths relative to this file for proper installation support

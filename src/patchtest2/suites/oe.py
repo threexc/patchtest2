@@ -1,7 +1,9 @@
-import patchtest2.patterns as patterns
-import pyparsing
 import re
+
+import pyparsing
 import unidiff
+
+import patchtest2.patterns as patterns
 from patchtest2.results import patchtest_result
 
 

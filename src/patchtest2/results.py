@@ -1,6 +1,6 @@
-import inspect
 import functools
-from typing import Tuple, Any
+import inspect
+from typing import Any, Tuple
 
 
 def patchtest_result(func):

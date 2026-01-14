@@ -1,13 +1,14 @@
+import importlib.util
 import inspect
 import json
 import logging
 import os
 import sys
-import importlib.util
 from pathlib import Path
-from typing import List, Optional, Dict, Any
-from patchtest2.parser import PatchtestParser
+from typing import Any, Dict, List, Optional
+
 from patchtest2.mbox import PatchSeries, TargetRepo
+from patchtest2.parser import PatchtestParser
 
 # Set up logging
 logger = logging.getLogger(__name__)

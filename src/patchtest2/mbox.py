@@ -11,13 +11,13 @@
 #
 
 import email
-from email.message import Message
-import git
 import os
 import re
+from dataclasses import dataclass
+from email.message import Message
 from typing import List, Optional
 
-from dataclasses import dataclass
+import git
 
 
 # From: https://stackoverflow.com/questions/59681461/read-a-big-mbox-file-with-python
