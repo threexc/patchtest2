@@ -7,6 +7,9 @@ from pathlib import Path
 from patchtest2.parser import PatchtestParser
 from patchtest2.mbox import PatchSeries, TargetRepo
 
+# Calculate default suite path relative to this file
+DEFAULT_SUITE_PATH = Path(__file__).parent / "suites"
+
 
 class Patchtest:
     def __init__(self, target_repo, series, suites=None, module_paths=None):
@@ -21,8 +24,8 @@ class Patchtest:
                 if suite not in self.suites:
                     self.suites.append(suite)
 
-        # Always include src/patchtest2/suites, then add any additional paths
-        self.module_paths = ["src/patchtest2/suites"]
+        # Always include default suite path, then add any additional paths
+        self.module_paths = [str(DEFAULT_SUITE_PATH)]
         if module_paths:
             # Add additional paths, avoiding duplicates
             for path in module_paths:

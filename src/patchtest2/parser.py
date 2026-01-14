@@ -10,9 +10,13 @@
 
 import os
 import argparse
+from pathlib import Path
 
-default_testdir = os.path.abspath(os.path.dirname(__file__) + "/suites")
-default_repodir = os.path.abspath(os.path.dirname(__file__) + "/../../..")
+# Calculate paths relative to this file for proper installation support
+PACKAGE_ROOT = Path(__file__).parent
+DEFAULT_SUITE_DIR = PACKAGE_ROOT / "suites"
+# For default_repodir, use current working directory as fallback
+DEFAULT_REPO_DIR = Path.cwd()
 
 
 class PatchtestParser(object):
@@ -44,14 +48,14 @@ class PatchtestParser(object):
         parser.add_argument(
             "--repodir",
             metavar="REPO",
-            default=default_repodir,
+            default=str(DEFAULT_REPO_DIR),
             help="Name of the repository where patch is merged",
         )
 
         parser.add_argument(
             "--testdir",
             metavar="TESTDIR",
-            default=default_testdir,
+            default=str(DEFAULT_SUITE_DIR),
             help="Directory where test cases are located",
         )
 
