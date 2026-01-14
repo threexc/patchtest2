@@ -23,7 +23,7 @@ class PatchtestParser(object):
     """Abstract the patchtest argument parser"""
 
     @classmethod
-    def get_parser(cls):
+    def get_parser(cls) -> argparse.ArgumentParser:
         parser = argparse.ArgumentParser()
 
         target_patch_group = parser.add_mutually_exclusive_group(required=True)

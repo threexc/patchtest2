@@ -3,12 +3,14 @@ import re
 import pyparsing
 import unidiff
 
-import patchtest2.patterns as patterns
+import patchtest2.patterns as patterns  # type: ignore[import-untyped]
 from patchtest2.results import patchtest_result
+from patchtest2.mbox import Patch
+from typing import Tuple
 
 
 @patchtest_result
-def test_mbox_commit_message_user_tags(target):
+def test_mbox_commit_message_user_tags(target: Patch) -> Tuple[str, str, str]:
     """Test for GitHub-style username tags (@username) in commit messages"""
     result = "PASS"
     reason = "Mbox includes one or more GitHub-style username tags. Ensure that any '@' symbols are stripped out of usernames"
@@ -20,7 +22,7 @@ def test_mbox_commit_message_user_tags(target):
 
 
 @patchtest_result
-def test_mbox_non_auh_upgrade(target):
+def test_mbox_non_auh_upgrade(target: Patch) -> Tuple[str, str, str]:
     """Test that patch is not from AUH (Auto Upgrade Helper)"""
     result = "PASS"
     reason = f"Invalid author {patterns.auh_email}. Resend the series with a valid patch author"
@@ -32,7 +34,7 @@ def test_mbox_non_auh_upgrade(target):
 
 
 @patchtest_result
-def test_mbox_target_mailing_list_meta_project(target):
+def test_mbox_target_mailing_list_meta_project(target: Patch) -> Tuple[str, str, str]:
     """Check for meta-* project tags in subject line"""
     result = "PASS"
     reason = "Series sent to the wrong mailing list or some patches from the series correspond to different mailing lists"
@@ -46,7 +48,7 @@ def test_mbox_target_mailing_list_meta_project(target):
 
 
 @patchtest_result
-def test_mbox_bugzilla_entry_format(target):
+def test_mbox_bugzilla_entry_format(target: Patch) -> Tuple[str, str, str]:
     """Test for proper Bugzilla entry format in commit messages"""
     result = "PASS"
     reason = None
@@ -63,7 +65,7 @@ def test_mbox_bugzilla_entry_format(target):
 
 
 @patchtest_result
-def test_mbox_author_valid(target):
+def test_mbox_author_valid(target: Patch) -> Tuple[str, str, str]:
     """Test for valid patch author"""
     result = "PASS"
     reason = (

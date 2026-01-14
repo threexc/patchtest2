@@ -15,7 +15,7 @@ import os
 import re
 from dataclasses import dataclass
 from email.message import Message
-from typing import List, Optional
+from typing import List, Optional, Iterator, Any
 
 import git
 
@@ -29,14 +29,14 @@ class MboxReader:
     def __enter__(self) -> "MboxReader":
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
+    def __exit__(self, exc_type: Any, exc_value: Any, exc_traceback: Any) -> None:
         self.handle.close()
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Message]:
         return iter(self.__next__())
 
-    def __next__(self):
-        lines = []
+    def __next__(self) -> Iterator[Message]:
+        lines: List[bytes] = []
         while True:
             line = self.handle.readline()
             if line == b"" or line.startswith(b"From "):
@@ -51,13 +51,19 @@ class MboxReader:
 class Patch:
     def __init__(self, data: Message) -> None:
         self.data = data
-        self.author: str = data["From"]
-        self.to: str = data["To"]
-        self.cc: str = data["Cc"]
-        self.subject: str = data["Subject"]
-        self.split_body: List[str] = re.split("---", data.get_payload(), maxsplit=1)
+        self.author: str = data["From"] or ""
+        self.to: str = data["To"] or ""
+        self.cc: str = data["Cc"] or ""
+        self.subject: str = data["Subject"] or ""
+        payload = data.get_payload()
+        # Handle payload that might be a list or string
+        if isinstance(payload, list):
+            payload_str = str(payload[0]) if payload else ""
+        else:
+            payload_str = str(payload)
+        self.split_body: List[str] = re.split("---", payload_str, maxsplit=1)
         self.commit_message: str = self.split_body[0]
-        self.diff: str = self.split_body[1]
+        self.diff: str = self.split_body[1] if len(self.split_body) > 1 else ""
         # get the shortlog, but make sure to exclude bracketed prefixes
         # before the colon, and remove extra whitespace/newlines
         self.shortlog: str = (
@@ -138,20 +144,16 @@ class TargetRepo:
             ["git", "checkout", "-B", self.working_branch, target_branch]
         )
 
-    def can_be_merged(self, patchfile: str):
+    def can_be_merged(self, patchfile: str) -> bool:
         # We don't actually want to propagate the error if the patch
         # can't merge, so put a try-except around it. However, if the
-        # check fails, return the error message so that it can be parsed
-        # to identify the failing message in the series
+        # check fails, return False
         try:
             self.merge_patch(patchfile)
-            result = True
-
-        except git.exc.GitCommandError as ce:
-            result = ce
+            return True
+        except git.exc.GitCommandError:
             self.abort_merge()
-
-        return result
+            return False
 
     def merge_patch(self, patchfile: str) -> None:
         self.repo.git.execute(

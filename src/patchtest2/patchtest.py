@@ -64,6 +64,12 @@ class Patchtest:
                     spec = importlib.util.spec_from_file_location(
                         f"patchtest2.suites.{suite_name}", module_file
                     )
+                    if spec is None or spec.loader is None:
+                        logger.warning(
+                            f"Could not load spec for suite '{suite_name}' from {module_file}"
+                        )
+                        continue
+
                     module = importlib.util.module_from_spec(spec)
 
                     # Add to sys.modules to handle imports within the module

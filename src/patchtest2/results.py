@@ -1,9 +1,9 @@
 import functools
 import inspect
-from typing import Any, Tuple
+from typing import Any, Tuple, Callable
 
 
-def patchtest_result(func):
+def patchtest_result(func: Callable[..., Tuple[str, str, str]]) -> Callable[..., str]:
     """Decorator that formats test results consistently.
 
     Test functions must return a tuple of (subject, result, reason) where:
@@ -13,7 +13,7 @@ def patchtest_result(func):
     """
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> str:
         result = func(*args, **kwargs)
 
         # Validate return value

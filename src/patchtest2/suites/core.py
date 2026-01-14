@@ -3,12 +3,14 @@ import re
 import pyparsing
 import unidiff
 
-import patchtest2.patterns as patterns
+import patchtest2.patterns as patterns  # type: ignore[import-untyped]
 from patchtest2.results import patchtest_result
+from patchtest2.mbox import Patch
+from typing import Tuple
 
 
 @patchtest_result
-def test_mbox_has_signed_off_by(target):
+def test_mbox_has_signed_off_by(target: Patch) -> Tuple[str, str, str]:
     result = "FAIL"
     if patterns.signed_off_by.search_string(target.commit_message):
         result = "PASS"
@@ -17,7 +19,7 @@ def test_mbox_has_signed_off_by(target):
 
 
 @patchtest_result
-def test_mbox_shortlog_format(target):
+def test_mbox_shortlog_format(target: Patch) -> Tuple[str, str, str]:
     result = "PASS"
     reason = None
     if not target.shortlog.strip():
@@ -38,7 +40,7 @@ def test_mbox_shortlog_format(target):
 
 
 @patchtest_result
-def test_mbox_shortlog_length(target):
+def test_mbox_shortlog_length(target: Patch) -> Tuple[str, str, str]:
     shortlog = re.sub("^(\[.*?\])+ ", "", target.shortlog)
     shortlog_len = len(shortlog)
     result = "PASS"
@@ -55,7 +57,7 @@ def test_mbox_shortlog_length(target):
 
 
 @patchtest_result
-def test_mbox_has_commit_message(target):
+def test_mbox_has_commit_message(target: Patch) -> Tuple[str, str, str]:
     result = "PASS"
     reason = "Please include a commit message on your patch explaining the change"
 
@@ -74,7 +76,7 @@ def test_mbox_has_commit_message(target):
 
 
 @patchtest_result
-def test_mbox_unidiff_parse_error(target):
+def test_mbox_unidiff_parse_error(target: Patch) -> Tuple[str, str, str]:
     result = "PASS"
     reason = f'Patch "{target.shortlog}" contains malformed diff lines.'
 
@@ -87,7 +89,7 @@ def test_mbox_unidiff_parse_error(target):
 
 
 @patchtest_result
-def test_mbox_revert_signed_off_by_exception(target):
+def test_mbox_revert_signed_off_by_exception(target: Patch) -> Tuple[str, str, str]:
     """Skip signed-off-by test for revert commits"""
     result = "PASS"
     reason = None
@@ -106,7 +108,7 @@ def test_mbox_revert_signed_off_by_exception(target):
 
 # Additional helper test that might be useful
 @patchtest_result
-def test_mbox_shortlog_revert_format(target):
+def test_mbox_shortlog_revert_format(target: Patch) -> Tuple[str, str, str]:
     """Test revert commit shortlog format"""
     result = "PASS"
     reason = None
